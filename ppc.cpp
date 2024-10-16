@@ -116,16 +116,36 @@ void PPC::Roll(float theta) {
 	c = rotation * c;
 }
 
-void PPC::Zoom(float zoomFactor) {
-	c = c * zoomFactor;
+void PPC::Zoom(float zoom)
+{
+	V3 vd = GetVD();
+	float f = GetF();
+	float fnew = f * zoom;
+	c = vd * fnew - a * (float)w / 2.0f - b * (float)h / 2.0f;
+
 }
 
-//// Interpolation: Linear interpolation between two cameras
-//PPC PPC::Interpolate(PPC& other, float t) {
-//	PPC result = *this;
-//	result.C = C + (t * (other.C - C));
-//	result.a = a + (t * (other.a - a));
-//	result.b = b + (t * (other.b - b));
-//	result.c = c + (t * (other.c - c));
-//	return result;
-//}
+PPC* PPC::Interpolate(PPC* cam2, float dis)
+{
+	PPC* inter = this;
+	V3 Cn = this->C + (cam2->C - this->C) / 2;
+	V3 upg = V3(0.0f, 1.0f, 0.0f);
+	V3 vd = this->GetVD() + (cam2->GetVD() - this->GetVD()) / 2;
+	V3 L = Cn + vd * dis;
+	inter->PositionAndOrient(Cn, L, upg);
+	return inter;
+}
+
+void PPC::PositionAndOrient(V3 Cn, V3 L, V3 upg) {
+	V3 vdn = (L - Cn).UnitVector();
+	V3 an = (vdn ^ upg).UnitVector();
+	V3 bn = vdn ^ an;
+	float f = GetF();
+	V3 cn = vdn * f - an * (float)w / 2.0f - bn * (float)h / 2.0f;
+
+	a = an;
+	b = bn;
+	c = cn;
+	C = Cn;
+
+}
