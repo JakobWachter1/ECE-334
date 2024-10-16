@@ -206,7 +206,7 @@ void TM::Light(float ka, V3 lv) {
 
 	for (int vi = 0; vi < vertsN; vi++)
 		colors[vi] = colors[vi].LightThisColor(lv, ka, normals[vi]);
-		
+
 }
 
 void TM::RenderFilled(FrameBuffer* fb, PPC* ppc) {
@@ -268,7 +268,7 @@ void TM::RenderFilledSM3(FrameBuffer* fb, PPC* ppc, V3 lv, float ka) {
 		V3 tvs[3];
 		V3 pvs[3];
 		V3 normals3[3];
-		unsigned int vinds[3]; 
+		unsigned int vinds[3];
 
 		for (int vi = 0; vi < 3; vi++) {
 			vinds[vi] = tris[3 * tri + vi];
@@ -283,3 +283,45 @@ void TM::RenderFilledSM3(FrameBuffer* fb, PPC* ppc, V3 lv, float ka) {
 		fb->RasterizeTriangleWithNormals(pvs[0], pvs[1], pvs[2], normals3[0], normals3[1], normals3[2], lv, ka);
 	}
 }
+
+void TM::CreatePlane(V3 origin, float width, float depth) {
+	vertsN = 4;
+	trisN = 2;  // Two triangles make up a rectangle
+
+	// Allocate memory for vertices, triangles, colors, and normals
+	verts = new V3[vertsN];
+	tris = new unsigned int[trisN * 3];
+	colors = new V3[vertsN];
+	normals = new V3[vertsN];
+
+	// Define the four vertices of the rectangular plane
+	verts[0] = origin;
+	verts[1] = origin + V3(width, 0, 0);
+	verts[2] = origin + V3(0, 0, depth);
+	verts[3] = origin + V3(width, 0, depth);
+
+	// Define the two triangles (as indices into the verts array)
+	tris[0] = 0; tris[1] = 1; tris[2] = 2;  // First triangle
+	tris[3] = 1; tris[4] = 3; tris[5] = 2;  // Second triangle
+
+	// Set the color for each vertex
+	V3 planeColor = V3(0.5f, 0.5f, 0.5f);  // Grayish color
+	SetAllColors(planeColor);
+
+	// Set normals for lighting (facing upwards in this case)
+	V3 normal = V3(0, 1, 0);
+	for (int i = 0; i < vertsN; i++) {
+		normals[i] = normal;
+	}
+}
+
+float TM::GetBottomBoundingAxis() {
+	float minY = verts[0][1];  // Initialize minY with the first vertex's y-coordinate
+	for (int i = 1; i < vertsN; i++) {
+		if (verts[i][1] < minY) {
+			minY = verts[i][1];  // Update minY if a lower y-coordinate is found
+		}
+	}
+	return minY;
+}
+
