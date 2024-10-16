@@ -6,7 +6,7 @@
 #include <sstream>
 #include <iomanip>
 
-Scene *scene;
+Scene* scene;
 
 using namespace std;
 
@@ -27,23 +27,10 @@ Scene::Scene() {
 	fb->label("SW Framebuffer");
 	fb->show();
 	fb->redraw();
-	float hfov = 80.0f;
-	ppc = new PPC(hfov, fb->w, fb->h);
-
-	
-
-	//Frame 2
-	/*int u1 = 320;
-	int v1 = 440;
-	int h1 = 200;
-	int w1 = 300;
-	fb1 = new FrameBuffer(u1, v1, w1, h1);
-	fb1->position(u1, v1);
-	fb1->label("Framebuffer 2");
-	fb1->show();
-	fb1->redraw();
 	float hfov = 60.0f;
-	ppc = new PPC(hfov, fb1->w, fb1->h);*/
+	ppc = new PPC(hfov, fb->w, fb->h);
+	V3 startingC = ppc->C;
+	V3 startingVD = (ppc->a ^ ppc->b).UnitVector();
 
 
 	gui = new GUI();
@@ -52,41 +39,47 @@ Scene::Scene() {
 
 	tmsN = 1;
 	tms = new TM[tmsN];
+	
+	tmsN1 = 1;
+	tms1 = new TM[tmsN1];
 
-	tms[0].LoadBin("geometry/teapot1K.bin");
-	//tms[0].LoadBin("geometry/teapot57K.bin");
+	tms[0].LoadBin("geometry/tree0.bin");
 	tms[0].onFlag = 1;
+	tms1[0].LoadBin("geometry/tree1.bin");
+	tms1[0].onFlag = 1;
 	V3 centroid = tms[0].Centroid();
 
 	tms[0].Translate(V3(0.0f, 0.0f, -150.0f) - centroid);
+	tms1[0].Translate(V3(0.0f, 0.0f, -150.0f) - centroid);
+	tms1[0].Translate(V3(5.0f, 5.0f, 0.0f));
 	centroid = V3(0.0f, 0.0f, -150.0f);
+
 	sm = 1;
-	ka = 0;
+	ka = .5;
 	lv = V3(0, 0, 1);
+	float bottomY = tms[0].GetBottomBoundingAxis();
+
+	TM plane;
+	plane.CreatePlane(V3(-25.0f, bottomY - 1.0f, -200.0f), 50.0f, 50.0f);
+	plane.onFlag = 1;
+	tms[1] = plane;
+	tmsN++;
+	tms[1].SetAllColors(V3(1.0f, 0.5f, .5f));
+
 	tms[0].Light(ka, lv);
+	tms1[0].Light(ka, lv);
+	tms[1].Light(ka, lv);
+	ppc->Translate(V3(0.0f, 0.0f, -120.0f));
+	// Ensure it renders along with the teapot
 	Render();
-	fb->redraw();
+
 }
 
 
 void Scene::SM1() {
-	cerr << endl;
-
-	{
-		sm = 1;
-		lv = V3(0, 0, 1);
-		tms[0].Light(ka, lv);
-		Render();
-		fb->redraw();
-		
-		return;
-	}
-
-	{
-		cerr << "INFO: pressed DBG" << endl;
-		fb->Set(0xFF0000FF);
-		fb->redraw();
-	}
+	Render();
+	Fl::check();
+	ppc->Translate(V3(0.0f, 0.0f, -5.0f));
 }
 
 void Scene::LightTop() {
@@ -99,10 +92,9 @@ void Scene::LightTop() {
 }
 
 void Scene::LightSide() {
-	lv = V3(1.0f, 0.0f, 0.0f);
-	tms[0].Light(ka, lv);
 	Render();
-	fb->redraw();
+	Fl::check();
+	ppc->Translate(V3(0.0f, 0.0f, 5.0f));
 }
 
 void Scene::LightRotate() {
@@ -110,6 +102,8 @@ void Scene::LightRotate() {
 	for (int fi = 0; fi < 100; fi++) {
 
 		tms[0].Light(ka, lv);
+		tms1[0].Light(ka, lv);
+		tms[1].Light(ka, lv);
 		if (sm == 1 || sm == 0) {
 			Render();
 		}
@@ -122,7 +116,7 @@ void Scene::LightRotate() {
 		fb->redraw();
 		Fl::check();
 
-		lv = lv.RotateThisPointdAboutAxis(V3(0.0f, 0.0f, 0.0f), V3(0.0f, 1.0f, 0.0f), 1.0f);
+		lv = lv.RotateThisPointdAboutAxis(V3(0.0f, 0.0f, 0.0f), V3(0.0f, 0.1f, 0.0f), 0.1f);
 
 	}
 
@@ -132,45 +126,61 @@ void Scene::LightRotate() {
 
 void Scene::LightBrighten() {
 	ka += .1;
+	tms[0].Light(ka, lv);
+	tms1[0].Light(ka, lv);
+	tms[1].Light(ka, lv);
+	Render();
 }
 
 void Scene::LightDim() {
 	ka -= .1;
-}
-
-void Scene::Color() {
-	
-	tms[0].SetAllColors(V3(1.0f, 0.0f, 1.0f));
 	tms[0].Light(ka, lv);
+	tms1[0].Light(ka, lv);
+	tms[1].Light(ka, lv);
 	Render();
-	fb->redraw();
 }
 
 void Scene::SM2() {
-	sm = 1;
-	lv = V3(0, 0, 1);
-	tms[0].Light(ka, lv);
-	RenderSM2();
-	fb->redraw();
+	for (int fi = 0; fi < 10; fi++) {
+
+		Render();  // Re-render the scene after moving the camera
+		Fl::check();  // Handle any UI updates
+	}
 }
 
+// Modify SM3 function to use Tilt for vertical movement
 void Scene::SM3() {
-	sm = 1;
-	lv = V3(0, 0, 1);
-	tms[0].Light(ka, lv);
-	RenderSM3();
-	fb->redraw();
+	for (int fi = 0; fi < 10; fi++) {
+		// Tilt the camera vertically, simulating looking up and down
+		ppc->Tilt(0.5f);  // Adjust the tilting speed
+
+		Render();  // Re-render the scene after tilting the camera
+		Fl::check();  // Handle any UI updates
+	}
 }
 
+// Modify Color function to use Roll for rotating the camera
+void Scene::Color() {
+	for (int fi = 0; fi < 10; fi++) {
+		// Roll the camera around its axis to simulate rotation
+		ppc->Roll(0.5f);  // Adjust the rolling speed here
+
+		Render();  // Re-render the scene after rolling the camera
+		fb->redraw();
+		Fl::check();  // Handle any UI updates
+	}
+}
 
 void Scene::Render() {
 
 	if (!fb)
 		return;
-
 	fb->Set(0xFFFFFFFF);
-	for (int tmi = 0; tmi < tmsN; tmi++) {
+	for (int tmi = tmsN - 1; tmi >= 0; tmi--) {
 		tms[tmi].RenderFilled(fb, ppc);
+	}
+	for (int tmi = tmsN1 - 1; tmi >= 0; tmi--) {
+		tms1[tmi].RenderFilled(fb, ppc);
 	}
 	fb->redraw();
 
@@ -217,7 +227,23 @@ void Scene::AppendValuesToFile(V3& a, V3& b, V3& c, V3& C, int w, int h, const s
 	outFile << "C: " << C << "\n";
 	outFile << "w: " << w << "\n";
 	outFile << "h: " << h << "\n";
-	outFile << "-------------------\n"; 
+	outFile << "-------------------\n";
 
 	outFile.close();
 }
+
+void Scene::CenterCameraOnCentroid() {
+	// Get the centroid of the object (assuming tms[0] is the teapot)
+	V3 centroid = tms[0].Centroid();
+
+	// Define a new camera position (you can adjust this based on how far the camera should be)
+	V3 cameraPosition = centroid + V3(0.0f, 0.0f, 200.0f);  // Adjust the distance as needed
+
+	// Reorient the camera to look at the centroid of the teapot
+	ppc->SetPose(cameraPosition, centroid, V3(0.0f, 1.0f, 0.0f));  // Up vector is Y-axis
+
+	// Render the scene after re-centering the camera
+	Render();
+	fb->redraw();
+}
+
