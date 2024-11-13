@@ -27,5 +27,15 @@ public:
 	friend ostream& operator<<(ostream& ostr, V3 v);
 	void SetFromColor(unsigned int color);
 	unsigned int GetColor();
-	V3 LightThisColor(V3 lv, float ka, V3 normal);
+	V3 LightThisColor(V3 lv, float ka, V3 normal, V3 ev);
+	V3 ReflectRayAboutThisNormal(V3 ray);
+};
+
+class AABB {
+public:
+	V3 minC, maxC;
+	AABB() : minC(FLT_MAX, FLT_MAX, FLT_MAX),
+		maxC(-FLT_MAX, -FLT_MAX, -FLT_MAX) {};
+	void AddPoint(V3 newPoint);
+	int Clip(int w, int h);
 };
