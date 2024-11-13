@@ -2,67 +2,67 @@
 
 #include "gui.h"
 
-void GUI::cb_DBG_i(Fl_Button*, void*) {
-  DBG_cb();
+void GUI::cb_Button1_i(Fl_Button*, void*) {
+    Button1_cb();
 }
-void GUI::cb_DBG(Fl_Button* o, void* v) {
-  ((GUI*)(o->parent()->user_data()))->cb_DBG_i(o,v);
-}
-
-void GUI::cb_LightRotate_i(Fl_Button*, void*) {
-    LightRotate_cb();
-}
-void GUI::cb_LightRotate(Fl_Button* o, void* v) {
-    ((GUI*)(o->parent()->user_data()))->cb_LightRotate_i(o, v);
+void GUI::cb_Button1(Fl_Button* o, void* v) {
+  ((GUI*)(o->parent()->user_data()))->cb_Button1_i(o,v);
 }
 
-void GUI::cb_LightSide_i(Fl_Button*, void*) {
-    LightSide_cb();
+void GUI::cb_Button2_i(Fl_Button*, void*) {
+    Button2_cb();
 }
-void GUI::cb_LightSide(Fl_Button* o, void* v) {
-    ((GUI*)(o->parent()->user_data()))->cb_LightSide_i(o, v);
-}
-
-void GUI::cb_LightTop_i(Fl_Button*, void*) {
-    LightTop_cb();
-}
-void GUI::cb_LightTop(Fl_Button* o, void* v) {
-    ((GUI*)(o->parent()->user_data()))->cb_LightTop_i(o, v);
+void GUI::cb_Button2(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_Button2_i(o, v);
 }
 
-void GUI::cb_LightBrighten_i(Fl_Button*, void*) {
-    LightBrighten_cb();
+void GUI::cb_Button3_i(Fl_Button*, void*) {
+    Button3_cb();
 }
-void GUI::cb_LightBrighten(Fl_Button* o, void* v) {
-    ((GUI*)(o->parent()->user_data()))->cb_LightBrighten_i(o, v);
-}
-
-void GUI::cb_LightDim_i(Fl_Button*, void*) {
-    LightDim_cb();
-}
-void GUI::cb_LightDim(Fl_Button* o, void* v) {
-    ((GUI*)(o->parent()->user_data()))->cb_LightDim_i(o, v);
+void GUI::cb_Button3(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_Button3_i(o, v);
 }
 
-void GUI::cb_SM2_i(Fl_Button*, void*) {
-    SM2_cb();
+void GUI::cb_Button4_i(Fl_Button*, void*) {
+    Button4_cb();
 }
-void GUI::cb_SM2(Fl_Button* o, void* v) {
-    ((GUI*)(o->parent()->user_data()))->cb_SM2_i(o, v);
-}
-
-void GUI::cb_SM3_i(Fl_Button*, void*) {
-    SM3_cb();
-}
-void GUI::cb_SM3(Fl_Button* o, void* v) {
-    ((GUI*)(o->parent()->user_data()))->cb_SM3_i(o, v);
+void GUI::cb_Button4(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_Button4_i(o, v);
 }
 
-void GUI::cb_Color_i(Fl_Button*, void*) {
-    Color_cb();
+void GUI::cb_Button5_i(Fl_Button*, void*) {
+    Button5_cb();
 }
-void GUI::cb_Color(Fl_Button* o, void* v) {
-    ((GUI*)(o->parent()->user_data()))->cb_Color_i(o, v);
+void GUI::cb_Button5(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_Button5_i(o, v);
+}
+
+void GUI::cb_Button6_i(Fl_Button*, void*) {
+    Button6_cb();
+}
+void GUI::cb_Button6(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_Button6_i(o, v);
+}
+
+void GUI::cb_Button7_i(Fl_Button*, void*) {
+    Button7_cb();
+}
+void GUI::cb_Button7(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_Button7_i(o, v);
+}
+
+void GUI::cb_Button8_i(Fl_Button*, void*) {
+    Button8_cb();
+}
+void GUI::cb_Button8(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_Button8_i(o, v);
+}
+
+void GUI::cb_Button9_i(Fl_Button*, void*) {
+    Button9_cb();
+}
+void GUI::cb_Button9(Fl_Button* o, void* v) {
+    ((GUI*)(o->parent()->user_data()))->cb_Button9_i(o, v);
 }
 
 
@@ -74,40 +74,40 @@ GUI::GUI() {
   { uiw = new Fl_Double_Window(400, 197, "GUI");
     uiw->user_data((void*)(this));
     { 
-        Fl_Button* o = new Fl_Button(15, 15, 80, 30, "SM1");
-        o->callback((Fl_Callback*)cb_DBG);
+        Fl_Button* o = new Fl_Button(15, 15, 80, 30, "Button 1");
+        o->callback((Fl_Callback*)cb_Button1);
     } 
     {
-        Fl_Button* o = new Fl_Button(15, 45, 80, 30, "Light Rotate");
-        o->callback((Fl_Callback*)cb_LightRotate);
+        Fl_Button* o = new Fl_Button(15, 45, 80, 30, "Button 2");
+        o->callback((Fl_Callback*)cb_Button2);
     }
     {
-        Fl_Button* o = new Fl_Button(15, 75, 80, 30, "Light Side");
-        o->callback((Fl_Callback*)cb_LightSide);
+        Fl_Button* o = new Fl_Button(15, 75, 80, 30, "Button 3");
+        o->callback((Fl_Callback*)cb_Button3);
     }
     {
-        Fl_Button* o = new Fl_Button(15, 105, 80, 30, "Light Top");
-        o->callback((Fl_Callback*)cb_LightTop);
+        Fl_Button* o = new Fl_Button(15, 105, 80, 30, "Button 4");
+        o->callback((Fl_Callback*)cb_Button4);
     }
     {
-        Fl_Button* o = new Fl_Button(15, 135, 80, 30, "Light Brighten");
-        o->callback((Fl_Callback*)cb_LightBrighten);
+        Fl_Button* o = new Fl_Button(15, 135, 80, 30, "Button 5");
+        o->callback((Fl_Callback*)cb_Button5);
     }
     {
-        Fl_Button* o = new Fl_Button(15, 165, 80, 30, "Light Dim");
-        o->callback((Fl_Callback*)cb_LightDim);
+        Fl_Button* o = new Fl_Button(15, 165, 80, 30, "Button 6");
+        o->callback((Fl_Callback*)cb_Button6);
     }
     {
-        Fl_Button* o = new Fl_Button(100, 15, 80, 30, "SM2");
-        o->callback((Fl_Callback*)cb_SM2);
+        Fl_Button* o = new Fl_Button(100, 15, 80, 30, "Button 7");
+        o->callback((Fl_Callback*)cb_Button7);
     }
     {
-        Fl_Button* o = new Fl_Button(100, 45, 80, 30, "SM3");
-        o->callback((Fl_Callback*)cb_SM3);
+        Fl_Button* o = new Fl_Button(100, 45, 80, 30, "Button 8");
+        o->callback((Fl_Callback*)cb_Button8);
     }
     {
-        Fl_Button* o = new Fl_Button(100, 75, 80, 30, "Color");
-        o->callback((Fl_Callback*)cb_Color);
+        Fl_Button* o = new Fl_Button(100, 75, 80, 30, "Button 9");
+        o->callback((Fl_Callback*)cb_Button9);
     }
     
     uiw->end();
@@ -123,40 +123,40 @@ void GUI::show() {
   uiw->show();
 }
 
-void GUI::DBG_cb() {
-  scene->SM1();
+void GUI::Button1_cb() {
+  scene->Button1();
 }
 
-void GUI::LightRotate_cb() {
-  scene->LightRotate();
+void GUI::Button2_cb() {
+  scene->Button2();
 }
 
-void GUI::LightSide_cb() {
-    scene->LightSide();
+void GUI::Button3_cb() {
+    scene->Button3();
 }
 
-void GUI::LightTop_cb() {
-    scene->LightTop();
+void GUI::Button4_cb() {
+    scene->Button4();
 }
 
-void GUI::LightBrighten_cb() {
-    scene->LightBrighten();
+void GUI::Button5_cb() {
+    scene->Button5();
 }
 
-void GUI::LightDim_cb() {
-    scene->LightDim();
+void GUI::Button6_cb() {
+    scene->Button6();
 }
 
-void GUI::SM2_cb() {
-    scene->SM2();
+void GUI::Button7_cb() {
+    scene->Button7();
 }
 
-void GUI::SM3_cb() {
-    scene->SM3();
+void GUI::Button8_cb() {
+    scene->Button8();
 }
 
-void GUI::Color_cb() {
-    scene->Color();
+void GUI::Button9_cb() {
+    scene->Button9();
 }
 
 
