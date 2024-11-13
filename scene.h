@@ -4,34 +4,37 @@
 #include "framebuffer.h"
 #include "ppc.h"
 #include "tm.h"
+#include "CGInterface.h"
+
 
 class Scene {
 public:
 
 	GUI* gui;
-	FrameBuffer* fb;
-	FrameBuffer* fb1;
+	FrameBuffer* fb, * hwfb;
+	FrameBuffer* texfb;
+	// SHADERS
+	CGInterface* cgi;
+	ShaderOneInterface* soi;
+	int needHWInit;
+	// END SHADERS
+	V3 L;
+	float exp;
 	PPC* ppc;
-	PPC* ppc3;
 	TM* tms;
-	V3 centroid;
-	int sm;
-	float ka;
-	V3 lv;
 	int tmsN;
 	Scene();
-	void SM1();
-	void SM2();
-	void SM3();
-	void LightTop();
-	void LightSide();
-	void LightRotate();
-	void LightDim();
-	void Color();
-	void LightBrighten();
+	void Button1();
+	void Button2();
+	void Button3();
+	void Button4();
+	void Button5();
+	void Button6();
+	void Button7();
+	void Button8();
+	void Button9();
 	void Render();
-	void RenderSM2();
-	void RenderSM3();
+	void RenderHW();
 	void AppendValuesToFile(V3& a, V3& b, V3& c, V3& C, int w, int h, const std::string& filename);
 };
 
