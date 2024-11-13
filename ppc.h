@@ -16,9 +16,13 @@ public:
 	int Project(V3 P, V3& Q);
 	void Translate(V3 tv);
 	void SetPose(V3 newC, V3 newVD, V3 newUpG);
-	void RenderWF(FrameBuffer* fb, float visf, PPC* visppc);
 	V3 GetVD();
 	float GetF();
+	void RenderWF(FrameBuffer* fb, float visf, PPC* visppc);
+	V3 GetRay(int u, int v);
+	void SetIntrinsicsHW();
+	void SetExtrinsicsHW();
+	void SetViewHW();
 	void Pan(float theta);
 	void Tilt(float theta);
 	void Roll(float theta);
