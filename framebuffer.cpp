@@ -5,21 +5,28 @@
 #include "scene.h"
 
 #include <tiffio.h>
-#include <FL/math.h>
 
 using namespace std;
 
 FrameBuffer::FrameBuffer(int u0, int v0, int _w, int _h) :
 	Fl_Gl_Window(u0, v0, _w, _h, 0) {
 
+	ishw = 0;
 	w = _w;
 	h = _h;
 	pix = new unsigned int[w * h];
+	zb = new float[w * h];
 }
 
 void FrameBuffer::draw() {
 
-	glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, pix);
+	if (!ishw) {
+		glDrawPixels(w, h, GL_RGBA, GL_UNSIGNED_BYTE, pix);
+	}
+	else {
+		scene->RenderHW();
+		glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pix);
+	}
 
 }
 
@@ -36,7 +43,11 @@ int FrameBuffer::handle(int event) {
 		int v = Fl::event_y();
 		if (u < 0 || u > w - 1 || v < 0 || v > h - 1)
 			return 0;
-		cerr << u << " " << v << "          \r";
+		V3 color; color.SetFromColor(Get(u, v));
+		if (this == scene->hwfb) {
+			color = (color - V3(0.5f, 0.5f, 0.5f)) * 128.0f;
+		}
+		cerr << u << " " << v << " " << color << "         \r";
 		return 0;
 	}
 	default:
@@ -226,6 +237,11 @@ void FrameBuffer::Rasterize2DSegment(V3 p0, V3 p1, V3 c0, V3 c1) {
 		V3 cc = c0 + (c1 - c0) * t;
 		int u = (int)p[0];
 		int v = (int)p[1];
+		if (u < 0 || v < 0 || u > w - 1 || v > h - 1)
+			continue;
+		if (IsFarther(u, v, p[2]))
+			continue;
+		SetZB(u, v, p[2]);
 		SetGuarded(u, v, cc.GetColor());
 	}
 
@@ -244,6 +260,7 @@ void FrameBuffer::Render3DSegment(V3 p0, V3 p1, V3 c0, V3 c1, PPC* ppc) {
 	Rasterize2DSegment(pp0, pp1, c0, c1);
 	return;
 }
+
 
 void FrameBuffer::ClearZB() {
 
@@ -276,6 +293,64 @@ void FrameBuffer::SetZB(int u, int v, float z) {
 	zb[(h - 1 - v) * w + u] = z;
 
 }
+
+
+void FrameBuffer::SetChecker(int csize, V3 c0, V3 c1) {
+
+	for (int v = 0; v < h; v++) {
+		for (int u = 0; u < w; u++) {
+			int cv = v / csize;
+			int cu = u / csize;
+			if ((cu + cv) % 2)
+				Set(u, v, c0.GetColor());
+			else
+				Set(u, v, c1.GetColor());
+		}
+	}
+
+}
+
+
+unsigned int FrameBuffer::Get(int u, int v) {
+
+	return pix[(h - 1 - v) * w + u];
+
+}
+
+
+void FrameBuffer::Render3DPoint(V3 p, V3 c, PPC* ppc, int psize) {
+
+	V3 pp;
+	if (!ppc->Project(p, pp))
+		return;
+
+	for (int v = (int)pp[1] - psize / 2; v < (int)pp[1] + psize / 2; v++) {
+		for (int u = (int)pp[0] - psize / 2; u < (int)pp[0] + psize / 2; u++) {
+			if (IsFarther(u, v, pp[2]))
+				continue;
+			SetZB(u, v, pp[2]);
+			Set(u, v, c.GetColor());
+		}
+	}
+
+}
+
+void FrameBuffer::SetBackgroundEM(/*CM *cm, */PPC* ppc) {
+
+	for (int v = 0; v < h; v++) {
+		for (int u = 0; u < w; u++) {
+			V3 eyeRay = ppc->GetRay(u, v);
+			unsigned int col = 0xFF0000FF;
+			// col = cm->LookUp(eyeRay);
+			Set(u, v, col);
+		}
+	}
+
+}
+
+
+
+//My Code
 
 void FrameBuffer::RasterizeTriangle(V3 p0, V3 p1, V3 p2, V3 c0, V3 c1, V3 c2) {
 	int minX = std::max(0, (int)std::floor(std::min({ p0[0], p1[0], p2[0] })));
