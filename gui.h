@@ -13,35 +13,35 @@ public:
 	GUI();
   Fl_Double_Window *uiw;
 private:
-  inline void cb_DBG_i(Fl_Button*, void*);
-  static void cb_DBG(Fl_Button*, void*);
-  inline void cb_LightRotate_i(Fl_Button*, void*);
-  static void cb_LightRotate(Fl_Button*, void*);
-  inline void cb_LightSide_i(Fl_Button*, void*);
-  static void cb_LightSide(Fl_Button*, void*);
-  inline void cb_LightTop_i(Fl_Button*, void*);
-  static void cb_LightTop(Fl_Button*, void*);
-  inline void cb_LightBrighten_i(Fl_Button*, void*);
-  static void cb_LightBrighten(Fl_Button*, void*);
-  inline void cb_LightDim_i(Fl_Button*, void*);
-  static void cb_LightDim(Fl_Button*, void*);
-  inline void cb_SM2_i(Fl_Button*, void*);
-  static void cb_SM2(Fl_Button*, void*);
-  inline void cb_SM3_i(Fl_Button*, void*);
-  static void cb_SM3(Fl_Button*, void*);
-  inline void cb_Color_i(Fl_Button*, void*);
-  static void cb_Color(Fl_Button*, void*);
+  inline void cb_Button1_i(Fl_Button*, void*);
+  static void cb_Button1(Fl_Button*, void*);
+  inline void cb_Button2_i(Fl_Button*, void*);
+  static void cb_Button2(Fl_Button*, void*);
+  inline void cb_Button3_i(Fl_Button*, void*);
+  static void cb_Button3(Fl_Button*, void*);
+  inline void cb_Button4_i(Fl_Button*, void*);
+  static void cb_Button4(Fl_Button*, void*);
+  inline void cb_Button5_i(Fl_Button*, void*);
+  static void cb_Button5(Fl_Button*, void*);
+  inline void cb_Button6_i(Fl_Button*, void*);
+  static void cb_Button6(Fl_Button*, void*);
+  inline void cb_Button7_i(Fl_Button*, void*);
+  static void cb_Button7(Fl_Button*, void*);
+  inline void cb_Button8_i(Fl_Button*, void*);
+  static void cb_Button8(Fl_Button*, void*);
+  inline void cb_Button9_i(Fl_Button*, void*);
+  static void cb_Button9(Fl_Button*, void*);
 public:
   void show();
-  void DBG_cb();
-  void LightRotate_cb();
-  void LightSide_cb();
-  void LightTop_cb();
-  void LightBrighten_cb();
-  void LightDim_cb();
-  void SM2_cb();
-  void SM3_cb();
-  void Color_cb();
+  void Button1_cb();
+  void Button2_cb();
+  void Button3_cb();
+  void Button4_cb();
+  void Button5_cb();
+  void Button6_cb();
+  void Button7_cb();
+  void Button8_cb();
+  void Button9_cb();
 
 
 
