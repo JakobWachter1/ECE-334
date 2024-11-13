@@ -8,6 +8,7 @@ using namespace std;
 #include <ostream>
 #include <istream>
 #include "m33.h"
+#include "scene.h"
 
 V3::V3(float x, float y, float z) {
 
@@ -90,12 +91,6 @@ V3 V3::Normalize(V3 v) {
 	return v / sqrt(v * v);
 }
 
-V3 V3::RotatePointAroundAxis(V3 point, V3 axis, float angle) {
-	M33 rotationMatrix;
-	rotationMatrix.SetRotationAxisAngle(axis, angle);
-	return rotationMatrix * point;
-}
-
 V3 V3::RotateThisPointdAboutAxis(V3 aO, V3 aD, float theta) {
 
 	// build coordinate system with aO as origin and aD as one axis
@@ -171,12 +166,72 @@ unsigned int V3::GetColor() {
 	return ret;
 }
 
-V3 V3::LightThisColor(V3 lv, float ka, V3 normal) {
+V3 V3::LightThisColor(V3 lv, float ka, V3 normal, V3 ev) {
 
 	V3& colorv = *this;
 
 	float kd = lv * normal;
 	kd = (kd < 0.0f) ? 0.0f : kd;
-	V3 ret = colorv * (ka + (1.0f - ka) * kd);
+
+	float ks; // specular highlight from 0 to 1
+	V3 highlightColor(1.0f, 1.0f, 0.0f);
+	V3 r = normal.ReflectRayAboutThisNormal(ev);
+	ks = r * lv;
+	ks = ks < 0 ? 0.0f : ks;
+	ks = powf(ks, scene->exp);
+
+
+	V3 ret = colorv * (ka + (1.0f - ka) * kd) + highlightColor * ks;
+	ret[0] = (ret[0] > 1.0f) ? 1.0f : ret[0];
+	ret[1] = (ret[1] > 1.0f) ? 1.0f : ret[1];
+	ret[2] = (ret[2] > 1.0f) ? 1.0f : ret[2];
 	return ret;
 }
+
+void AABB::AddPoint(V3 newPoint) {
+
+	for (int i = 0; i < 3; i++) {
+		if (newPoint[i] < minC[i])
+			minC[i] = newPoint[i];
+		if (newPoint[i] > maxC[i])
+			maxC[i] = newPoint[i];
+	}
+
+}
+
+
+int AABB::Clip(int w, int h) {
+
+	if (minC[0] > (float)w)
+		return 0;
+	if (maxC[0] < 0.0f)
+		return 0;
+	if (minC[1] > (float)h)
+		return 0;
+	if (maxC[1] < 0.0f)
+		return 0;
+
+	if (minC[0] < 0.0f)
+		minC[0] = 0.0f;
+	if (maxC[0] > (float)w)
+		maxC[0] = (float)w;
+	if (minC[1] < 0.0f)
+		minC[1] = 0.0f;
+	if (maxC[1] > (float)h)
+		maxC[1] = (float)h;
+
+	return 1;
+
+}
+
+
+V3 V3::ReflectRayAboutThisNormal(V3 ray) {
+
+	V3& n = *this;
+	V3 e = ray;
+
+	V3 en = n * (e * n);
+	V3 r = en * 2.0f - e;
+	return r;
+
+}	
